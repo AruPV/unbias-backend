@@ -18,15 +18,7 @@ class ArticlesController < ApplicationController
   # POST /articles
   def create
     url = params[:url]
-    doc = Nokogiri.HTML5(URI.open(url))
-    article_title = doc.css("h1").first.to_s
-    puts(article_title)
-    article_body = doc.css("h2, h3, h4, h5, p")
-    article_body.search("img, svg, circle, path, span, template").each(&:remove)
-    article_body = article_body.to_s
-    puts(article_body)
-    article = { article_title: article_title, article_body: article_body }
-    puts(article)
+    article = Article.process(url)
     render json: article
   end
 
