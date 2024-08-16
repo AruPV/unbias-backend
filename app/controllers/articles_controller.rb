@@ -17,9 +17,22 @@ class ArticlesController < ApplicationController
 
   # POST /articles
   def create
-    url = params[:url]
-    article = Article.process(url)
-    render json: article
+    url = params[:url]        # !!! No auth
+    begin
+      document = Article.process(url)
+      article = Article.new(document)
+      article[:url] = url
+      article[:user_id] = 1
+      article.save
+    rescue => error
+      render status: error    # !!! Handle errors individually before production
+    else
+      response_title = "<h1>#{article.title}</h1>"
+      response_content = Commonmarker.to_html(article.content)  # !!! Cache this
+
+      response_json = { title: response_title, content: response_content }
+      render json: response_json
+    end
   end
 
   # PATCH/PUT /articles/1
@@ -35,7 +48,6 @@ class ArticlesController < ApplicationController
   def destroy
     @article.destroy!
   end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_article

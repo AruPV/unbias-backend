@@ -26,6 +26,7 @@ gem "bootsnap", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
+# Transform html to Markdown
 gem "reverse_markdown"
 
 # Transform markup to HTML
@@ -36,6 +37,7 @@ gem "rack-cors"
 
 # Wrapper for Net::HTTPS & Net::HTTP
 gem "open-uri"
+gem "http"
 
 # HTML parser
 gem "nokogiri", "~> 1.16", ">= 1.16.7"
