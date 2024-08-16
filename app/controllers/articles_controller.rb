@@ -15,23 +15,34 @@ class ArticlesController < ApplicationController
     render json: @article
   end
 
+  def handle_fetch(url)
+  end
+
   # POST /articles
   def create
     url = params[:url]        # !!! No auth
-    begin
-      document = Article.process(url)
-      article = Article.new(document)
-      article[:url] = url
-      article[:user_id] = 1
-      article.save
-    rescue => error
-      render status: error    # !!! Handle errors individually before production
-    else
-      response_title = "<h1>#{article.title}</h1>"
-      response_content = Commonmarker.to_html(article.content)  # !!! Cache this
+    is_unbias = params[:unbias]
+    user_id = 1               # !!! Change when auth
+    article = Article.where("url = ?", url).first
 
-      response_json = { title: response_title, content: response_content }
-      render json: response_json
+    # If URL not in DB
+    if article == nil
+      begin
+        article = Article.new(UrlHandler.call(url))
+        article[:user_id] = user_id
+        article.save
+      rescue => error
+        render status: error    # !!! Handle errors individually before production
+        return
+      end
+    end
+
+    if !is_unbias
+      render json: article.generate_json()
+    else
+      llm_response = Llm.call(article)
+      article = Article.new(llm_response)
+      render json: article.generate_json()
     end
   end
 

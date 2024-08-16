@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_08_16_141740) do
+ActiveRecord::Schema[7.2].define(version: 2024_08_16_200630) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -47,7 +47,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_16_141740) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "content"
+    t.integer "unbiased_id"
     t.index ["original_id"], name: "index_articles_on_original_id"
+    t.index ["unbiased_id"], name: "index_articles_on_unbiased_id"
     t.index ["user_id"], name: "index_articles_on_user_id"
   end
 
@@ -62,4 +64,5 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_16_141740) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "articles", "articles", column: "original_id"
   add_foreign_key "articles", "users"
+  add_foreign_key "articles", "users", column: "unbiased_id"
 end
