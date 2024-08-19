@@ -8,10 +8,10 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   Rails.logger.info "FRONTEND_URL: #{ENV['FRONTEND_URL']}"
   allow do
-    origins ENV["FRONTEND_URL"]
+    origins "*"
 
     resource "*",
       headers: :any,
-      methods: [:get, :post, :put, :patch, :delete, :options, :head]
+      methods: [ :get, :post, :put, :patch, :delete, :options, :head ]
   end
 end
