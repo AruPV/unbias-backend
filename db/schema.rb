@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_08_16_200630) do
+ActiveRecord::Schema[7.2].define(version: 2024_08_19_193035) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -51,6 +51,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_16_200630) do
     t.datetime "updated_at", null: false
     t.text "content"
     t.bigint "unbiased_id"
+    t.integer "bias_score"
+    t.integer "shock_score"
+    t.string "top_biased_words", default: [], array: true
     t.index ["original_id"], name: "index_articles_on_original_id"
     t.index ["unbiased_id"], name: "index_articles_on_unbiased_id"
     t.index ["user_id"], name: "index_articles_on_user_id"

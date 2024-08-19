@@ -10,6 +10,7 @@ class UrlHandler
   def call
     response = HTTP.get(@url)
     doc = Nokogiri.HTML5(response)
+    puts(doc)
     article = doc.css("body")
 
     title_string = article.at("h1").inner_html

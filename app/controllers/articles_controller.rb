@@ -24,19 +24,29 @@ class ArticlesController < ApplicationController
     is_unbias = params[:unbias]
     user_id = 1               # !!! Change when auth
     article = Article.where("url = ?", url).first
+    puts("Check if in db")
 
     # If URL not in DB
     if article == nil
       begin
+        puts("Creating Article")
         article = Article.new(UrlHandler.call(url))
         article[:user_id] = user_id
+        puts("Saving article")
+        llm_json = Llm.call(article, false)
+        article[:top_biased_words] = llm_json["top_biased_words"]
+        article[:shock_score] = llm_json["shock_score"]
+        article[:bias_score] = llm_json["bias_score"]
+        puts(article)
         article.save
       rescue => error
+        puts("Error")
         render status: error    # !!! Handle errors individually before production
         return
       end
     end
 
+    puts("Article found")
     if !is_unbias
       render json: article.generate_json
       return
@@ -48,8 +58,14 @@ class ArticlesController < ApplicationController
       return
     end
 
-    llm_response = Llm.call(article)
+    puts("Generating new unbiased version")
+    llm_response = Llm.call(article, true)
     new_article = Article.new(llm_response)
+    llm_json = Llm.call(new_article, false)
+    puts("Received response from LLm")
+    new_article[:top_biased_words] = llm_json["top_biased_words"]
+    new_article[:shock_score] = llm_json["shock_score"]
+    new_article[:bias_score] = llm_json["bias_score"]
     new_article.save
     article[:unbiased_id] = new_article.id
     render json: new_article.generate_json()
