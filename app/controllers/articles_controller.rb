@@ -38,12 +38,21 @@ class ArticlesController < ApplicationController
     end
 
     if !is_unbias
-      render json: article.generate_json()
-    else
-      llm_response = Llm.call(article)
-      article = Article.new(llm_response)
-      render json: article.generate_json()
+      render json: article.generate_json
+      return
     end
+
+    if article.unbiased_id != nil
+      article = Article.find(article.unbiased_id)
+      render json: article.generate_json
+      return
+    end
+
+    llm_response = Llm.call(article)
+    new_article = Article.new(llm_response)
+    new_article.save
+    article[:unbiased_id] = new_article.id
+    render json: new_article.generate_json()
   end
 
   # PATCH/PUT /articles/1

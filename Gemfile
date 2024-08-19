@@ -3,7 +3,6 @@ source "https://rubygems.org"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.2.0"
 # Use sqlite3 as the database for Active Record
-gem "sqlite3", ">= 1.4"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
@@ -36,7 +35,6 @@ gem "commonmarker"
 gem "rack-cors"
 
 # Wrapper for Net::HTTPS & Net::HTTP
-gem "open-uri"
 gem "http"
 
 # HTML parser
@@ -56,3 +54,9 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 end
+
+gem "pg", "~> 1.5"
+
+gem "dockerfile-rails", ">= 1.6", :group => :development
+
+gem "aws-sdk-s3", "~> 1.158", :require => false

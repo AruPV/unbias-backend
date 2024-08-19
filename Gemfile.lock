@@ -74,6 +74,22 @@ GEM
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     ast (2.4.2)
+    aws-eventstream (1.3.0)
+    aws-partitions (1.965.0)
+    aws-sdk-core (3.201.5)
+      aws-eventstream (~> 1, >= 1.3.0)
+      aws-partitions (~> 1, >= 1.651.0)
+      aws-sigv4 (~> 1.9)
+      jmespath (~> 1, >= 1.6.1)
+    aws-sdk-kms (1.88.0)
+      aws-sdk-core (~> 3, >= 3.201.0)
+      aws-sigv4 (~> 1.5)
+    aws-sdk-s3 (1.158.0)
+      aws-sdk-core (~> 3, >= 3.201.0)
+      aws-sdk-kms (~> 1)
+      aws-sigv4 (~> 1.5)
+    aws-sigv4 (1.9.1)
+      aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.2.0)
     bigdecimal (3.1.8)
     bootsnap (1.18.4)
@@ -94,6 +110,8 @@ GEM
     debug (1.9.2)
       irb (~> 1.10)
       reline (>= 0.3.8)
+    dockerfile-rails (1.6.17)
+      rails (>= 3.0.0)
     domain_name (0.6.20240107)
     dotenv (3.1.2)
     dotenv-rails (3.1.2)
@@ -131,6 +149,7 @@ GEM
     irb (1.14.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
+    jmespath (1.6.2)
     json (2.7.2)
     language_server-protocol (3.17.0.3)
     llhttp-ffi (0.5.0)
@@ -171,14 +190,11 @@ GEM
       racc (~> 1.4)
     nokogiri (1.16.7-x86_64-linux)
       racc (~> 1.4)
-    open-uri (0.4.1)
-      stringio
-      time
-      uri
     parallel (1.26.2)
     parser (3.3.4.2)
       ast (~> 2.4.1)
       racc
+    pg (1.5.7)
     psych (5.1.2)
       stringio
     public_suffix (6.0.1)
@@ -267,26 +283,13 @@ GEM
       rubocop-rails
     ruby-progressbar (1.13.0)
     securerandom (0.3.1)
-    sqlite3 (2.0.4-aarch64-linux-gnu)
-    sqlite3 (2.0.4-aarch64-linux-musl)
-    sqlite3 (2.0.4-arm-linux-gnu)
-    sqlite3 (2.0.4-arm-linux-musl)
-    sqlite3 (2.0.4-arm64-darwin)
-    sqlite3 (2.0.4-x86-linux-gnu)
-    sqlite3 (2.0.4-x86-linux-musl)
-    sqlite3 (2.0.4-x86_64-darwin)
-    sqlite3 (2.0.4-x86_64-linux-gnu)
-    sqlite3 (2.0.4-x86_64-linux-musl)
     stringio (3.1.1)
     strscan (3.1.0)
     thor (1.3.1)
-    time (0.3.0)
-      date
     timeout (0.4.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
-    uri (0.13.0)
     useragent (0.16.10)
     webrick (1.8.1)
     websocket-driver (0.7.6)
@@ -311,20 +314,21 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  aws-sdk-s3 (~> 1.158)
   bootsnap
   brakeman
   commonmarker
   debug
+  dockerfile-rails (>= 1.6)
   dotenv-rails
   http
   nokogiri (~> 1.16, >= 1.16.7)
-  open-uri
+  pg (~> 1.5)
   puma (>= 5.0)
   rack-cors
   rails (~> 7.2.0)
   reverse_markdown
   rubocop-rails-omakase
-  sqlite3 (>= 1.4)
   tzinfo-data
 
 BUNDLED WITH
