@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_08_19_193035) do
+ActiveRecord::Schema[7.2].define(version: 2024_08_20_205859) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,21 +42,37 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_19_193035) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "article_versions", force: :cascade do |t|
+    t.bigint "original_id"
+    t.bigint "unbiased_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["original_id"], name: "index_article_versions_on_original_id"
+    t.index ["unbiased_id"], name: "index_article_versions_on_unbiased_id"
+  end
+
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.string "url"
     t.bigint "user_id", null: false
-    t.bigint "original_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "content"
-    t.bigint "unbiased_id"
     t.integer "bias_score"
     t.integer "shock_score"
     t.string "top_biased_words", default: [], array: true
-    t.index ["original_id"], name: "index_articles_on_original_id"
-    t.index ["unbiased_id"], name: "index_articles_on_unbiased_id"
+    t.bigint "article_version_id"
+    t.index ["article_version_id"], name: "index_articles_on_article_version_id"
     t.index ["user_id"], name: "index_articles_on_user_id"
+  end
+
+  create_table "original_unbiaseds", force: :cascade do |t|
+    t.bigint "original_id", null: false
+    t.bigint "unbiased_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["original_id"], name: "index_original_unbiaseds_on_original_id"
+    t.index ["unbiased_id"], name: "index_original_unbiaseds_on_unbiased_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -68,7 +84,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_19_193035) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "articles", "articles", column: "original_id"
+  add_foreign_key "article_versions", "articles", column: "original_id"
+  add_foreign_key "article_versions", "articles", column: "unbiased_id"
+  add_foreign_key "articles", "article_versions"
   add_foreign_key "articles", "users"
-  add_foreign_key "articles", "users", column: "unbiased_id"
+  add_foreign_key "original_unbiaseds", "articles", column: "original_id"
+  add_foreign_key "original_unbiaseds", "articles", column: "unbiased_id"
 end

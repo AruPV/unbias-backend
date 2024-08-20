@@ -1,7 +1,6 @@
 class Article < ApplicationRecord
   belongs_to :user
-  belongs_to :original, class_name: "Article", optional: true
-  belongs_to :unbiased, class_name: "Article", optional: true
+  belongs_to :article_version, optional: true
 
   def generate_json
     response_title = "<h1>#{self.title}</h1>"
