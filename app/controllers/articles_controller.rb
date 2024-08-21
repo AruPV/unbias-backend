@@ -74,7 +74,7 @@ class ArticlesController < ApplicationController
     new_article[:shock_score] = llm_json["shock_score"]
     new_article[:bias_score] = llm_json["bias_score"]
     new_article.save
-    article_version.update(unbiased: new_article[:id])
+    article_version.update(unbiased_id: new_article[:id])
     render json: new_article.generate_json()
   end
 
