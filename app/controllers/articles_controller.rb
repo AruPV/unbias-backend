@@ -24,23 +24,27 @@ class ArticlesController < ApplicationController
     article = Article.where("url = ?", url).first
 
     # If URL not in DB
-    if article == nil
+    if article == nil               # Honestly, this logic should be elsewhere
       puts("Article not found in DB")
       begin
+        # Create Article
         puts("Creating Article")
         article = Article.new(UrlHandler.call(url))
+        # Update Article before commit to db
         article[:user_id] = user_id
-        puts("Saving article")
         llm_json = Llm.call(article, false)
         article[:top_biased_words] = llm_json["top_biased_words"]
         article[:shock_score] = llm_json["shock_score"]
         article[:bias_score] = llm_json["bias_score"]
-        puts(article)
         article.save
+        # Create ArticleVersion and update article record
         article_version = ArticleVersion.new(original_id: article[:id])
-        article[:article_version_id] = article_version[:id]
-        article.save
         article_version.save
+        puts("Updating the record in db for articles to have:")
+        puts(article_version[:id])
+        article.update(article_version_id: article_version[:id])
+        puts("Updated the record in db for the article. Now is:")
+        puts(article[:id])
       rescue => error
         puts("Error")
         render status: error    # !!! Handle errors individually before production
@@ -66,14 +70,11 @@ class ArticlesController < ApplicationController
     llm_response = Llm.call(article, true)
     new_article = Article.new(llm_response)
     llm_json = Llm.call(new_article, false)
-    puts("Received response from LLm")
-    new_article[:article_version_id] = article[:article_version_id]
     new_article[:top_biased_words] = llm_json["top_biased_words"]
     new_article[:shock_score] = llm_json["shock_score"]
     new_article[:bias_score] = llm_json["bias_score"]
     new_article.save
-    article[:unbiased_id] = new_article[:id]
-    article_verion[:unbiased] = new_article[:id]
+    article_version.update(unbiased: new_article[:id])
     render json: new_article.generate_json()
   end
 

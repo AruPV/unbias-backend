@@ -38,11 +38,16 @@ class Llm
       title = message.split("\n").first
       content = message[title.length...]
       title = title[1...]
-      { url: @article.url, title: title, content: content, user_id: @article.user_id, original_id: @article.id }
+      {
+        url: @article.url,
+        title: title,
+        content: content,
+        user_id: @article.user_id,
+        article_version_id: @article[:article_version_id]
+      }
     else
       unparsed_json = message.split("\n").first
-      puts(unparsed_json)
-      terms_array = JSON.parse(unparsed_json)
+      parsed_json = JSON.parse(unparsed_json)
     end
   end
 end
