@@ -1,6 +1,5 @@
 class Article < ApplicationRecord
-  belongs_to :user
-  belongs_to :article_version, optional: true
+  belongs_to :article_version, optional: true, dependent: :destroy
 
   def generate_json
     response_title = "<h1>#{self.title}</h1>"

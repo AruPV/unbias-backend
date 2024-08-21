@@ -18,10 +18,9 @@ class ArticlesController < ApplicationController
 
   # POST /articles
   def create
-    puts(clerk_user)
-    url = params[:url]        # !!! No auth
     is_unbias = params[:unbias]
-    user_id = 1               # !!! Change when auth
+    url = params[:url]
+    user_id = clerk_user["id"]
     article = Article.where("url = ?", url).first
 
     # If URL not in DB
@@ -39,7 +38,7 @@ class ArticlesController < ApplicationController
         article[:bias_score] = llm_json["bias_score"]
         article.save
         # Create ArticleVersion and update article record
-        article_version = ArticleVersion.new(original_id: article[:id])
+        article_version = ArticleVersion.new(original_id: article[:id], user_id: user_id)
         article_version.save
         puts("Updating the record in db for articles to have:")
         puts(article_version[:id])

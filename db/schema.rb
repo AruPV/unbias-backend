@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_08_20_205859) do
+ActiveRecord::Schema[7.2].define(version: 2024_08_21_192922) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -47,6 +47,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_20_205859) do
     t.bigint "unbiased_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "user_id"
     t.index ["original_id"], name: "index_article_versions_on_original_id"
     t.index ["unbiased_id"], name: "index_article_versions_on_unbiased_id"
   end
@@ -54,7 +55,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_20_205859) do
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.string "url"
-    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "content"
@@ -62,8 +62,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_20_205859) do
     t.integer "shock_score"
     t.string "top_biased_words", default: [], array: true
     t.bigint "article_version_id"
+    t.string "user_id"
     t.index ["article_version_id"], name: "index_articles_on_article_version_id"
-    t.index ["user_id"], name: "index_articles_on_user_id"
   end
 
   create_table "original_unbiaseds", force: :cascade do |t|
@@ -87,7 +87,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_20_205859) do
   add_foreign_key "article_versions", "articles", column: "original_id"
   add_foreign_key "article_versions", "articles", column: "unbiased_id"
   add_foreign_key "articles", "article_versions"
-  add_foreign_key "articles", "users"
   add_foreign_key "original_unbiaseds", "articles", column: "original_id"
   add_foreign_key "original_unbiaseds", "articles", column: "unbiased_id"
 end
