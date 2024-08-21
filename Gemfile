@@ -40,6 +40,9 @@ gem "http"
 # HTML parser
 gem "nokogiri", "~> 1.16", ">= 1.16.7"
 
+# Auth
+gem "clerk-sdk-ruby", require: "clerk"
+
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

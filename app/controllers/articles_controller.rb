@@ -18,6 +18,7 @@ class ArticlesController < ApplicationController
 
   # POST /articles
   def create
+    puts(clerk_user)
     url = params[:url]        # !!! No auth
     is_unbias = params[:unbias]
     user_id = 1               # !!! Change when auth
