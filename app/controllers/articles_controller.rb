@@ -5,7 +5,8 @@ class ArticlesController < ApplicationController
 
   # GET /articles
   def index
-    render json: Article.latest_articles
+    puts(clerk_user["id"])
+    render json: ArticleVersion.latest_articles
   end
 
   # GET /articles/1
