@@ -12,9 +12,9 @@ class Llm
   def call
     prompt =
     if @is_unbias then
-      "Return a markdown from a markdown. If something seems alarmist, tone it down. If something seems like they're trying to undersell something that has happened, tone it up. Be mindful of who the site aligns with internationally and correct for it. Also correct for your own algorithmic racism. minimize bias"
+      "Account your own bias toward the US and 'the west' first. Then, if after that the following article seems biased make it less so. If it seems clickbaity make it less so. Return as markdown"
     else
-      'Rate the following markdown on how biased it is from 1-100, how clickbaity it is from 1-100, and provide the most biased words in the text. return in the format: {"bias_score": BIAS_SCORE, "shock_score": SHOCK_SCORE, "top_biased_words": [TOP_BIASED_WORDS_ARRAY]}'
+      'Account for your own bias toward the US and "the west" first. Then rate the following markdown on how biased it is from 1-100, how clickbaity it is from 1-100, and provide the most biased words in the text. return in the format: {"bias_score": BIAS_SCORE, "shock_score": SHOCK_SCORE, "top_biased_words": [TOP_BIASED_WORDS_ARRAY]}'
     end
 
     body = "# " + @article.title + "\n" + @article.content
