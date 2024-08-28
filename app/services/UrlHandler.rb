@@ -20,6 +20,6 @@ class UrlHandler
     content_string = content.to_s
     content_markdown = ReverseMarkdown.convert content_string
 
-    { url: @url, title: title_string, content: content_markdown }
+    { title: title_string, content: content_markdown }
   end
 end

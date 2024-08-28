@@ -39,11 +39,8 @@ class Llm
       content = message[title.length...]
       title = title[1...]
       {
-        url: @article.url,
         title: title,
-        content: content,
-        user_id: @article.user_id,
-        article_version_id: @article[:article_version_id]
+        content: content
       }
     else
       unparsed_json = message.split("\n").first

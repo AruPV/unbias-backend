@@ -1,4 +1,4 @@
-class LikesController < ApplicationController
+class VotesController < ApplicationController
   before_action :find_article_version
   before_action :find_user
 
