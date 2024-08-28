@@ -17,7 +17,7 @@ class Llm
       'Account for your own bias toward the US and "the west" first. Then rate the following markdown on how biased it is from 1-100, how clickbaity it is from 1-100, and provide the most biased words in the text. return in the format: {"bias_score": BIAS_SCORE, "shock_score": SHOCK_SCORE, "top_biased_words": [TOP_BIASED_WORDS_ARRAY]}'
     end
 
-    body = "# " + @article.title + "\n" + @article.content
+    body = "# " + @article[:title] + "\n" + @article[:content]
     response = HTTP.auth("Bearer " + @key)
       .post("https://api.openai.com/v1/chat/completions", json: {
       model: "gpt-4o-mini",

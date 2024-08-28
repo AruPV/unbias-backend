@@ -8,9 +8,12 @@ class UrlHandler
   end
 
   def call
+    puts("in call")
+    puts(@url)
     response = HTTP.get(@url)
+    puts("got response")
     doc = Nokogiri.HTML5(response)
-    puts(doc)
+    puts("got doc")
     article = doc.css("body")
 
     title_string = article.at("h1").inner_html

@@ -7,10 +7,11 @@ class Article < ApplicationRecord
   # @user_id [bigint]
 
   def new_version(is_unbias)
-    parsed_article = UrlHandler.call(@url)
+    parsed_article = UrlHandler.call(self.url)
+    puts(parsed_article)
 
-    if !is_unbias then
-      parsed_article = Llm.call(unbiased_article, true)
+    if is_unbias then
+      parsed_article = Llm.call(parsed_article, true)
     end
 
     article_metrics = Llm.call(parsed_article, false)
@@ -29,20 +30,16 @@ class Article < ApplicationRecord
     )
   end
 
-=begin
-  def self.latest_articles
-    Article.all.map do |article|
-      original = ArticleVerion.find(article.original_id).generate_json
-      unbiased =
-        if article_version.unbiased_id == nil then {}
-        else Article.find(article_version.unbiased_id).generate_json end
-      { original: original, unbiased: unbiased }
+  def self.latest_articles(limit = 10)
+    latest_articles = Article.last(limit).reverse.map do |article|
+      article.retrieve_versions
     end
   end
 
   def retrieve_versions
-    @article_versions.map do |article_version|
-    end
+    {
+      original: self.article_versions.first&.generate_json,
+      unbiased: self.article_versions.last&.generate_json
+    }
   end
-=end
 end

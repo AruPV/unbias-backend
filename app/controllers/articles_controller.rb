@@ -5,7 +5,7 @@ class ArticlesController < ApplicationController
 
   # GET /articles
   def index
-    render json: ArticleVersion.latest_articles
+    render json: Article.latest_articles
   end
 
   # GET /articles/1
@@ -17,12 +17,12 @@ class ArticlesController < ApplicationController
   def create
     is_unbias = params[:unbias]
     url = params[:url]
-    user_id = clerk_user["id"]
+    user = User.where("clerk_id = ?", clerk_user["id"]).first
 
     article = Article.where("url = ?", url).first
     if article == nil
       begin
-        article = Article.create(url: url, user_id: user_id)
+        article = Article.create(url: url, user_id: user.id)
       rescue => error
         render status: error
         return
@@ -44,7 +44,7 @@ class ArticlesController < ApplicationController
       return
     end
 
-    unbiased = article.article_verions.last
+    unbiased = article.article_versions.last
     if unbiased == original then
       begin
         unbiased = article.new_version(true)
@@ -54,7 +54,7 @@ class ArticlesController < ApplicationController
       end
     end
 
-    render json: new_article.generate_json
+    render json: unbiased.generate_json
   end
 
   # PATCH/PUT /articles/1
