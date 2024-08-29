@@ -1,6 +1,7 @@
 class Article < ApplicationRecord
-  has_many :article_versions, dependent: :destroy
   belongs_to :user
+  has_many :article_versions, dependent: :destroy
+  has_many :votes, dependent: :destroy
 
   # Instance variables:
   # @url [string]
@@ -30,6 +31,12 @@ class Article < ApplicationRecord
     )
   end
 
+  def total_votes
+    self.votes.sum do |vote|
+      { true=>1, false=>-1, nil=>0 }[vote&.is_like]
+    end
+  end
+
   def self.latest_articles(limit = 10)
     latest_articles = Article.last(limit).reverse.map do |article|
       article.retrieve_versions
@@ -38,6 +45,8 @@ class Article < ApplicationRecord
 
   def retrieve_versions
     {
+      id: self.id,
+      vote_total: self.total_votes,
       original: self.article_versions.first&.generate_json,
       unbiased: self.article_versions.last&.generate_json
     }
