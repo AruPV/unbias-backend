@@ -1,0 +1,8 @@
+Postgres cluster spring-dawn-4668 created
+  Username:    postgres
+  Password:    VSW67WtEJ2m3tm8
+  Hostname:    spring-dawn-4668.internal
+  Flycast:     fdaa:9:e2a9:0:1::3
+  Proxy port:  5432
+  Postgres port:  5433
+  Connection string: postgres://postgres:VSW67WtEJ2m3tm8@spring-dawn-4668.flycast:5432
