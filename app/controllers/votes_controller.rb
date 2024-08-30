@@ -1,7 +1,7 @@
 class VotesController < ApplicationController
   before_action :find_article
   before_action :find_user
-  before_action :find_vote, only: [ :update, :destroy ]
+  before_action :find_vote, only: [ :destroy ]
 
   # GET articles/vote
   def show
@@ -10,8 +10,6 @@ class VotesController < ApplicationController
 
   # POST articles/vote
   def create
-    puts(vote_params)
-    is_like = params[:isLike]
     vote = @article.votes.create(vote_params)
     if vote.save
       render json: vote.is_like
@@ -27,11 +25,22 @@ class VotesController < ApplicationController
 
   # PATCH/PUT articles/vote
   def update
-    Vote.find(vote_id).update
-    if @article.update(article_params)
-      render json: @article
+    vote_id = @article.find_vote_by_user(@user_id)
+    if vote_id == nil
+      vote = @article.votes.create(vote_params)
+      if vote.save
+        render json: vote
+      else
+        render json: vote.errors, status: 400
+      end
+      return
+    end
+
+    vote = Vote.find(vote_id)
+    if vote.update(vote_params)
+      render json: vote
     else
-      render json: @article.errors, status: :unprocessable_entity
+      render json: vote.errors, status: :unprocessable_entity
     end
   end
 
@@ -39,6 +48,10 @@ class VotesController < ApplicationController
 
   def find_article
     @article = Article.find(params[:article_id])
+    puts(@article)
+    if @article == nil
+      render response: 404
+    end
   end
 
   def find_user
