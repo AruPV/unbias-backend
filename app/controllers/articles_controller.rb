@@ -2,10 +2,11 @@ require "open-uri"
 
 class ArticlesController < ApplicationController
   before_action :set_article, only: %i[ show update destroy ]
+  before_action :get_user
 
   # GET /articles
   def index
-    render json: Article.latest_articles
+    render json: Article.latest_articles(@user.id)
   end
 
   # GET /articles/1
@@ -17,12 +18,11 @@ class ArticlesController < ApplicationController
   def create
     is_unbias = params[:unbias]
     url = params[:url]
-    user = User.where("clerk_id = ?", clerk_user["id"]).first
 
     article = Article.where("url = ?", url).first
     if article == nil
       begin
-        article = Article.create(url: url, user_id: user.id)
+        article = Article.create(url: url, user: @user)
       rescue => error
         render status: error
         return
@@ -75,6 +75,14 @@ class ArticlesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_article
       @article = Article.find(params[:id])
+    end
+
+    def get_user
+      if !clerk_user
+        render status: 401
+        return
+      end
+      @user = User.where("clerk_id = ?", clerk_user["id"]).first
     end
 
     # Only allow a list of trusted parameters through.

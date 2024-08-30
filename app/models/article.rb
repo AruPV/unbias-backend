@@ -6,6 +6,12 @@ class Article < ApplicationRecord
   # Instance variables:
   # @url [string]
   # @user_id [bigint]
+  #
+  def self.latest_articles(user_id, limit = 10)
+    latest_articles = Article.last(limit).reverse.map do |article|
+      article.response_json(user_id)
+    end
+  end
 
   def new_version(is_unbias)
     parsed_article = UrlHandler.call(self.url)
@@ -31,22 +37,30 @@ class Article < ApplicationRecord
     )
   end
 
+  def find_vote_by_user(user_id)
+    user_vote_bool = self.votes.where(user_id: user_id).first&.id
+  end
+
+  def user_vote_status(user_id)
+    user_vote_bool = self.votes.where(user_id: user_id).first&.is_like
+    { true=>1, false=>-1, nil=>0 }[user_vote_bool]
+  end
+
   def total_votes
     self.votes.sum do |vote|
       { true=>1, false=>-1, nil=>0 }[vote&.is_like]
     end
   end
 
-  def self.latest_articles(limit = 10)
-    latest_articles = Article.last(limit).reverse.map do |article|
-      article.retrieve_versions
-    end
-  end
 
-  def retrieve_versions
+  def response_json(user_id)
     {
       id: self.id,
-      vote_total: self.total_votes,
+      vote: {
+        id: find_vote_by_user(user_id),
+        status: user_vote_status(user_id),
+        total: self.total_votes
+      },
       original: self.article_versions.first&.generate_json,
       unbiased: self.article_versions.last&.generate_json
     }
